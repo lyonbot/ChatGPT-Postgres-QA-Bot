@@ -1,0 +1,9 @@
+/db-data
+
+node_modules/
+*.log
+.DS_Store
+*.tgz
+*.tar.gz
+.tsbuildinfo
+/*/lib

@@ -1,0 +1,16 @@
+version: '3'
+services:
+  db:
+    image: ankane/pgvector
+    restart: always
+    env_file:
+      - ./env/database.env
+    # environment:
+    #   <see ./env/database.env>
+    #   POSTGRES_DB: beatrice
+    #   POSTGRES_USER: postgres
+    #   POSTGRES_PASSWORD: the_password5678
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
