@@ -1,0 +1,8 @@
+#!/bin/bash
+# Usage:  source env/all
+
+for fn in $(dirname "${BASH_SOURCE[0]}")/*.env
+do
+  echo "loading $fn"
+  source $fn
+done

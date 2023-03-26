@@ -2,12 +2,18 @@ import pgvector from 'pgvector/sequelize';
 import { DataTypes, Model, Sequelize } from "sequelize";
 import type { CreationOptional, NonAttribute, InferAttributes, InferCreationAttributes } from 'sequelize'
 
-import { VECTOR_SIZE } from '../constants';
+import { globalAI } from '../ai';
 
 // see https://sequelize.org/docs/v6/other-topics/typescript/
 
 pgvector.registerType(Sequelize);
-const sequelize = new Sequelize(process.env.DB_URL!, {
+const sequelize = new Sequelize({
+  dialect: 'postgres',
+  host: process.env.POSTGRES_HOST || '127.0.0.1',
+  port: +process.env.POSTGRES_PORT! || 5432,
+  database: process.env.POSTGRES_DB!,
+  username: process.env.POSTGRES_USER!,
+  password: process.env.POSTGRES_PASSWORD!,
   logging: false
 })
 
@@ -43,7 +49,7 @@ const init = (async function () {
       allowNull: false
     },
     vec: {
-      type: DataTypes.VECTOR(VECTOR_SIZE)
+      type: DataTypes.VECTOR(globalAI.embedding.dimension)
     },
     type: {
       type: DataTypes.ENUM('unknown', 'knowledge'),
@@ -72,3 +78,7 @@ const init = (async function () {
 })();
 
 export const getDatabase = () => init
+
+export const shutdownDatabase = async () => {
+  await sequelize.close()
+}

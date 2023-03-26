@@ -7,3 +7,5 @@ node_modules/
 *.tar.gz
 .tsbuildinfo
 /*/lib
+/env/openai.env
+/docker-compose.prod.yml

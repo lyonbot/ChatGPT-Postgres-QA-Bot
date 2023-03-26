@@ -16,8 +16,11 @@ if (proxyConfig) {
   requestor = Axios.create()
 }
 
+const apiKey = process.env.OPENAI_API_KEY;
+if (!apiKey) throw new Error('Need OPENAI_API_KEY')
+
 const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey,
 })
 
 const OpenAI = new OpenAIApi(config, undefined, requestor as any)
@@ -41,13 +44,13 @@ export async function answerQuestion(opt: { contexts: string[], question: string
     messages: [
       {
         "role": "system",
-        "content": "Answer the question as truthfully as possible using the provided knowledge, and if the answer is not contained within the text below, say \"I don't know\". Write the answer in the same language of the question. At the end of your answer, list all related knowledge links like [[knowledge 1]], [[knowledge 2]]"
+        "content": "You are a helpful manual book. Given the following knowledge as information source, answer any questions the user asks. Answer as truthfully as possible, and if the answer is not contained within the text below, say \"I don't know\". Write the answer in the same language of the question. At the end of your answer, list all related source links like [[KNOWLEDGE 1]], [[KNOWLEDGE 2]]."
       },
       {
         "role": "user",
         "content": [
-          ...contexts.map((context, index) => `Knowledge ${index + 1}:\n${context}`),
-          'Question:\n' + question
+          ...contexts.map((context, index) => `KNOWLEDGE ${index + 1}:\n${context}`),
+          'QUESTION:\n' + question
         ].join('\n\n')
       },
     ]

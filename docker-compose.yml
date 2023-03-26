@@ -1,3 +1,5 @@
+# See ./scripts/prod-up.sh to learn more about  #!dev  and  #!prod
+
 version: '3'
 services:
   db:
@@ -11,6 +13,30 @@ services:
     #   POSTGRES_USER: postgres
     #   POSTGRES_PASSWORD: the_password5678
     ports:
-      - "5432:5432"
+      - "5432:5432" #!dev: expose to local machine
     volumes:
       - ./db-data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: ./backend
+      args:
+        - NPM_REGISTRY=https://registry.npmmirror.com # remove this if no need for npm mirror
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - ./env/database.env
+      - ./env/openai.env
+    environment:
+      - POSTGRES_HOST=db
+      - HOST=0.0.0.0
+      - PORT=8080
+      - NODE_ENV=development #!dev
+      # - NODE_ENV=production #!prod
+    ports:
+      - "8080:8080"
+      - "9229:9229" #!dev Inspector Port
+    volumes:
+      - ./backend/lib:/app/lib:ro #!dev
+    entrypoint: node --inspect=0.0.0.0:9229 . #!dev
