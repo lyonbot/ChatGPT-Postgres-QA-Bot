@@ -4,7 +4,7 @@ version: '3'
 services:
   db:
     image: ankane/pgvector
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./env/database.env
     # environment:
@@ -22,7 +22,7 @@ services:
       context: ./backend
       args:
         - NPM_REGISTRY=https://registry.npmmirror.com # remove this if no need for npm mirror
-    restart: always
+    restart: unless-stopped
     depends_on:
       - db
     env_file:
